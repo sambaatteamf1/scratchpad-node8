@@ -3,6 +3,11 @@
 Misc DS/Algo problems solved in java script
 
 ## Usage
-$ node run  watch
+Install latest node and nvm
 
-All compiled code in dist 
+$ npm install
+
+To compile code (All compiled code in dis )
+$ npm run  watch
+
+
