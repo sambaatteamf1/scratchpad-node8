@@ -1,4 +1,10 @@
-
+// 
+// 
+// Write a function that takes  an input a phone number, specified
+// and return all possible character sequences that correspond to the
+// the phone number. The cellphone key pad is  specified by the mapping
+// below
+// 
 
 let heap = {
   '1' : [ 'A' , 'B' ],
@@ -44,5 +50,6 @@ function formCombo(partialNumberMap, lastDigitCharMap) {
 }
 
 
-let wordArr = printPossibleC(123)
+let phoneNumber = 123
+let wordArr = printPossibleC(phoneNumber)
 console.log(wordArr)

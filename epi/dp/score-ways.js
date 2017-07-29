@@ -1,10 +1,14 @@
+//  Given the final score of an NFL game, we want to
+//  compute how many different combinations of 2,3,7 
+//  point plays could make up the score
+//  
+//  EPI: Problem 17.1
 
+// var score_ways = [ 1, 2 ]
+// var k = 4
 
-var score_ways = [ 1, 2 ]
-var k = 4
-
-// var score_ways = [2, 3, 7];
-// var k = 12;
+var score_ways = [2, 3, 7];
+var k = 12;
 
 var combinations = new Array(k+1).fill(0)
 

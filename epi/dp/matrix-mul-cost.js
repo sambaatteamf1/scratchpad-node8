@@ -1,4 +1,6 @@
-
+//  CLRS 15.2 Matrix chain multiplication
+//  
+//  Parenthesize the matrix such that the cost of multiplication is optimal
 
 function buildInput(n) {
 	let m = []

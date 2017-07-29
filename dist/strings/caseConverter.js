@@ -1,14 +1,5 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.toCamelCase = toCamelCase;
-exports.toSnakeCase = toSnakeCase;
-
 var _lodash = require("lodash");
 
 var _ = _interopRequireWildcard(_lodash);
@@ -26,7 +17,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 //  
 function toCamelCase(str) {
 
-	if ((typeof str === "undefined" ? "undefined" : _typeof(str)) === undefined || str == null) {
+	if (typeof str == "undefined") {
 		return null;
 	}
 
@@ -61,3 +52,4 @@ function toCamelCase(str) {
 // str = "thisIsATest"
 // 
 function toSnakeCase(str) {}
+//# sourceMappingURL=caseConverter.js.map

@@ -1,7 +1,16 @@
 import * as _ from "lodash"
 
+//  Taken from CLRS 15.1 
+//  
+//  
+//  Give a rod of given length n inches and a table of prices
+//  Determine the maximum revenue obtainable by cutting up
+//  the rod and selling the pieces
+
+// length array
 var L = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 var reverse_L = L.reverse()
+//  prices array
 var P = [1, 5, 8, 9, 10, 17, 17, 20, 24, 30]
 var costArr = []
 var costArr2 = []

@@ -1,7 +1,6 @@
 import * as _ from "lodash"
 
 
-
 function findMedian(A, B) {
 	var lengthA = A.length
 	var lengthB = B.length

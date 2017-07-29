@@ -1,6 +1,6 @@
 import * as _ from "lodash"
 
-var score_ways = [ 1, 2 ]
+var denominations = [ 1, 2 ]
 var k = 4
 
 function countChange(money, coins) {
@@ -20,6 +20,6 @@ function countChange(money, coins) {
 }
 
 
-var count = countChange(k, score_ways)
+var count = countChange(k, denominations)
 
 console.log(count)

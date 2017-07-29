@@ -60,4 +60,4 @@ var A = [];
 var i = 3;
 
 console.log("rotating array A: " + A + "  " + i + " times:", rotate(A, i));
-//# sourceMappingURL=arr_rotate.js.map
+//# sourceMappingURL=rotate.js.map

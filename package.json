@@ -20,8 +20,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bin/dev",
-    "build": "mkdir -p dist && babel server -s -d dist",
-    "watch": "mkdir -p dist && babel server -s -d dist -w",
+    "build": "mkdir -p dist && babel epi -s -d dist",
+    "watch": "mkdir -p dist && babel epi -s -d dist -w",
     "prod": "npm run build && node bin/prod"
   },
   "author": "",
