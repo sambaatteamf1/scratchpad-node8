@@ -80,8 +80,17 @@ function printText(parent) {
 	return count	
 }
 
-var maxLines = 12
+var maxLines = 5
 var pageWidth = 72
+
+if (maxLines > n) {
+	console.log(`More lines than words. Setting lines to ${n}`)
+	maxLines = n
+}
+
+if (maxLines <= 0) {
+	return
+}
 
 while (true) {
 	let parent = justify_text_for_width(pageWidth)
@@ -91,10 +100,10 @@ while (true) {
 
 	if (lineCount > maxLines) {
 		// increase pagewidth
-		pageWidth += 5
+		pageWidth += 1
 	} else if (lineCount < maxLines) {
 		// decrease pagewidth
-		pageWidth -= 5
+		pageWidth -= 1
 	} else {
 		break
 	}
