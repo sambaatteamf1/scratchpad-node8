@@ -34,12 +34,25 @@ import * as _ from "lodash"
 //  
 // 
 
-function badness(i, j, pageWidth) {
+function badness(words, i, j, pageWidth) {
 	let totalWidth = 0
+    let nwords = j - i
+    let lastWord = j - 1
+   
+    if (nwords == 0) {
+        return 0
+    }
+    
 	// chars occupied for words + number of spaces between words	
 	for (let index = i;  index < j; index++) {
-		// one space after a word is ok
-		totalWidth += words[index].length + 1    	
+
+		// one space after a word is ok, except for the last word
+        // (because line has to be left and right justified)
+        if (index == lastWord) {
+            totalWidth += words[index].length
+        } else {
+            totalWidth += words[index].length + 1    
+        }
 	}
 
 	let b_value = pageWidth - totalWidth
@@ -47,10 +60,12 @@ function badness(i, j, pageWidth) {
 	return b_value
 }
 
-function justify_text_for_width(pageWidth) {
+function justify_text_for_width(words, pageWidth) {
 	// store index where the next line begins
 	var parent = []
 
+    let n = words.length
+    
 	// memo table for minimizing the badness of the next line
 	var DP = []
 
@@ -58,8 +73,10 @@ function justify_text_for_width(pageWidth) {
 	// because there will not be any second line
 	DP[n] = 0
 
-	for (let i = n-1; i >= 0; i--) {
 
+	for (let i = n-1; i >= 0; i--) {
+		let min = Infinity
+		
 		for (let j = i+1; j < n+1; j++) {
 
 			// we already know that lower values of j does
@@ -68,15 +85,22 @@ function justify_text_for_width(pageWidth) {
 				break				
 			}
 
-			let badness_j = badness(i, j, pageWidth)
+			let badness_j = badness(words, i, j, pageWidth)
 			if (badness_j < 0) {
 				// [i, j] does not fit the line
 				// console.log(`string [i,j] ${i},${j} does not fit line`)				
 				break
 			}
 
-			DP[i] = DP[j] + badness_j
-			parent[i] =  { next : j , total_badness : DP[i] , badness : badness_j }
+			let total_badness = DP[j] + Math.pow(badness_j, 3)
+			if (total_badness <= min) {
+				min = DP[i] = total_badness
+				parent[i] =  { next : j , total_badness : DP[i] , badness : badness_j }	
+				// console.log(`min badness: ${min} spaces: ${badness_j} for i=${i} and next line at j=${j}`)
+			} else {
+                // console.log(`badness: ${total_badness} for i=${i} and next line at j=${j}`)
+            }
+			
 		}
 
 	}
@@ -84,34 +108,80 @@ function justify_text_for_width(pageWidth) {
 	return parent	
 }
 
-function printText(parent) {
+function printText(words, parent, pageWidth) {
 	let count = 0
 	var start = 0
-	var text = ""
+	var text = []
 
 	for (let i=0; i < parent.length ; ) {
 		let end = parent[i]
+
 		if (end == undefined) {
 			return { count : 0 , text : text }	
 		}
 
+		// last word in the line
+		let last = end.next-1
 		let line = ""
-		for (let index=start; index < end.next; index++) {
-			line = line + words[index] + " "
+
+		// fill it with 1, atleast one space after a word
+		let nwords = end.next - start 
+		let spacesArr = new Array(nwords).fill(1)
+        
+		// distribute the badness equally from left to right equally, except for the last line.
+        // For the last line of text, it should be left justified and no extra space is inserted between words.
+        
+        if (last < words.length - 1) {
+            // console.log(`Adding spaces for line which starts at word ${i}`)
+            
+            let extra_spaces = end.badness
+            while (extra_spaces > 0 && start < last) {
+
+                for (let index=start, widx=0; ((extra_spaces > 0) && (index < last)); index++, widx++) {
+                    spacesArr[widx] += 1	    
+                    --extra_spaces
+                }
+            } 
+        }
+        
+		for (let index=start, widx=0; index < last; index++, widx++) {
+			let spaces = ""
+
+            // console.log(`Adding ${spacesArr[widx]} spaces after word: ${words[index]}`)
+            
+			while (spacesArr[widx] > 0) {
+				spaces += " "
+				spacesArr[widx] -= 1
+			}
+
+			line = line + words[index] + spaces
 		}
 
-		// text += line + " [badness = " +  end.badness + " ] " +  "\n"
+        
+		// line = line +  words[last] + "[badness = " +  end.badness + " ] " 
 
-		text += line + "\n"
+		line = line + words[last] 
 
+        // fill spaces at the end         
+        if  (line.length != pageWidth) {
+            let diff = pageWidth - line.length
+            while (diff > 0 ) {
+                line = line + " "
+                --diff
+            }
+        }
+    
+        text.push(line)
+        
 		start = end.next
 		i = parent[i].next
 
 		count += 1
 	}
-
+    
 	return { count : count , text : text }	
 }
+
 
 
 var text = `On Monday, the moon will completely eclipse the sun, and people all over the U.S. will watch. 
@@ -124,60 +194,74 @@ to the the so-called path of totality. This is the first coast-to-coast solar ec
 People in parts of the contiguous U.S. last saw a total solar eclipse in 1979. NASA is also 
 live-streaming the eclipse for four and a half hours, beginning at 11:45 a.m. ET.`
 
-// var text = `I have a cool pet`
+var text = `I have a cool pet`
 
-// var text = `You are given a string containing space-separated words of Latin letters that needs 
-//             to be converted to an ad and (possibly) split into multiple lines. 
-//             Ad can not occupy more than K line`
+var text = `You are given a string containing space-separated words of Latin letters that needs 
+            to be converted to an ad and (possibly) split into multiple lines. 
+            Ad can not occupy more than K line`
 
 // var text = ""
 
-var maxLines = 10
-var pageWidth = 20
+// var text = "This is an example of text justification."
 
-var words = _.words(text)
-var n = words.length
+var maxLines = 4
 
-if (maxLines > n) {
-	console.log(`More lines than words. Setting lines to ${n}`)
-	maxLines = n
-}
+function optimizeTextForKLines() {
+	let pageWidth = 14
 
-if (maxLines <= 0) {
-	process.exit(0)
-}
+	let words = _.words(text)
+	let n = words.length
 
-var pw = {}
-
-while (true) {
-
-	// abort for invalid page widths
-	if (pageWidth <= 0) {
-		break
+	if (maxLines > n) {
+		console.log(`More lines than words. Setting lines to ${n}`)
+		maxLines = n
 	}
 
-	// if we have already run, the justification
-	// for the given width, then break
-	if (pw[pageWidth] != undefined) {
-		break
+	if (maxLines <= 0) {
+		process.exit(0)
 	}
 
-	let parent = justify_text_for_width(pageWidth)
-	let parsed = printText(parent)
 
-	// console.log(`With page width=${pageWidth} , total no. lines=${parsed.count}`)
+	var pw = {}
+	let parent = []
+	let parsed = {}
 
-	pw[pageWidth] =  parsed.count
+	while (true) {
 
-	if (!parsed.count || parsed.count > maxLines) {
-		// increase pagewidth
-		pageWidth += 1
+		// abort for invalid page widths
+		if (pageWidth <= 0) {
+			break
+		}
 
-	} else if (parsed.count < maxLines) {
-		// decrease pagewidth
-		pageWidth -= 1
-	} else {
-		console.log(parsed.text)
-		break
+		// if we have already run, the justification
+		// for the given width, then break
+		if (pw[pageWidth] != undefined) {
+			break
+		}
+
+		parent = justify_text_for_width(words, pageWidth)
+		parsed = printText(words, parent, pageWidth)
+
+		// console.log(`With page width=${pageWidth} , total no. lines=${parsed.count}`)
+
+		pw[pageWidth] =  parsed.count
+
+		if (!parsed.count || parsed.count > maxLines) {
+			// increase pagewidth
+			pageWidth += 1
+
+		} else if (parsed.count < maxLines) {
+			// decrease pagewidth
+			pageWidth -= 1
+		} else {
+			break
+		}
 	}
+
+	return parsed.text
 }
+
+console.log(optimizeTextForKLines())
+
+
+

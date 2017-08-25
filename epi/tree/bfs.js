@@ -12,6 +12,14 @@ t.add(new TreeNode(1))
 t.add(new TreeNode(3))
 t.add(new TreeNode(7))
 
+
+
+console.log("....... print tree in order ............")
+t.inorder()
+console.log(".........................")
+
+
+
 console.log("....... print tree level order ............")
 t.bfs()
 console.log(".........................")

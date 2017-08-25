@@ -31,6 +31,24 @@ class TreeNode {
 	}
 
 
+	inorder() {
+
+
+		if (this.right != null) {
+			this.right.inorder()
+		}
+
+		console.log(" " + this.data + " ")
+
+		if (this.left != null) {
+			this.left.inorder()
+		}
+
+
+		return
+	}
+
+
 	bfs() {
 		let queue = []
 		printInLevelOrder(this, queue)
